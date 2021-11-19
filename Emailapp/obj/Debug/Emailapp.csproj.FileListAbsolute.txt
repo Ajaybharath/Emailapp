@@ -1,0 +1,11 @@
+E:\ASSINGMENT\Emailapp\Emailapp\bin\Debug\Emailapp.exe.config
+E:\ASSINGMENT\Emailapp\Emailapp\bin\Debug\Emailapp.exe
+E:\ASSINGMENT\Emailapp\Emailapp\bin\Debug\Emailapp.pdb
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.AssemblyReference.cache
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.ResolveComReference.cache
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.Form1.resources
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.Properties.Resources.resources
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.GenerateResource.cache
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.CoreCompileInputs.cache
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.exe
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.pdb
