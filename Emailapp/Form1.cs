@@ -1,17 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using Microsoft.Office.Interop.Excel;
 using System.Runtime.InteropServices;
 using System.Net;
 using System.Net.Mail;
+using System.Threading;
 
 namespace Emailapp
 {
@@ -22,70 +15,13 @@ namespace Emailapp
             InitializeComponent();
         }
         int i;
+        System.Data.DataTable dt;
         private void button1_Click(object sender, EventArgs e)
         {
-            //string filePath = string.Empty;
-            //string fileExt = string.Empty;
-            //OpenFileDialog file = new OpenFileDialog(); //open dialog to choose file  
-            //string fname = "";
-            //OpenFileDialog fdlg = new OpenFileDialog();
-            //fdlg.Title = "Excel File Dialog";
-            //fdlg.InitialDirectory = @"c:\";
-            //fdlg.Filter = "All files (*.*)|*.*|All files (*.*)|*.*";
-            //fdlg.FilterIndex = 2;
-            //fdlg.RestoreDirectory = true;
-            //    //fname = fdlg.FileName;
-            //    if (fdlg.ShowDialog() == DialogResult.OK)
-            //    {
-            //        fname = fdlg.FileName;
-            //    }
-            //    Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
-            //    Microsoft.Office.Interop.Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(fname);
-            //    Microsoft.Office.Interop.Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-            //    Microsoft.Office.Interop.Excel.Range xlRange = xlWorksheet.UsedRange;
-            //    int rowCount = xlRange.Rows.Count;
-            //    int colCount = xlRange.Columns.Count;
-            //// dt.Column = colCount;  
-            //    System.Data.DataTable d1 = new System.Data.DataTable();
-            //    dataGridView1.ColumnCount = colCount;
-            //    dataGridView1.RowCount = rowCount;
-            //    d1.Columns.AddRange(new DataColumn[5]{ new DataColumn("Name", typeof(string)),new DataColumn("Emailid", typeof(string)),new DataColumn("Position", typeof(string)),new DataColumn("Date", typeof(DateTime)),new DataColumn("Time",typeof(DateTime)) });
-            //    for (int i = 1; i <= rowCount; i++)
-            //    {
-            //        for (int j = 1; j <= colCount; j++)
-            //        {
-
-
-            //            //write the value to the Grid  
-
-
-            //            if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-            //            {
-            //                dataGridView1.Rows[i - 1].Cells[j - 1].Value = xlRange.Cells[i, j].Value2.ToString();
-
-            //            }
-            //            // Console.Write(xlRange.Cells[i, j].Value2.ToString() + "\t");  
-
-            //            //add useful things here!     
-            //        }
-            //    }
-
-            //    //cleanup  
-            //    GC.Collect();
-            //    GC.WaitForPendingFinalizers();
-            //    Marshal.ReleaseComObject(xlRange);
-            //    Marshal.ReleaseComObject(xlWorksheet);
-
-            //    //close and release  
-            //    xlWorkbook.Close();
-            //    Marshal.ReleaseComObject(xlWorkbook);
-
-            //    //quit and release  
-            //    xlApp.Quit();
-            //    Marshal.ReleaseComObject(xlApp);
             string file = ""; //variable for the Excel File Location
-            System.Data.DataTable dt = new System.Data.DataTable(); //container for our excel data
+            //container for our excel data
             DataRow row;
+            dt = new System.Data.DataTable();
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Check if Result == "OK".
@@ -140,9 +76,10 @@ namespace Emailapp
                         }
                         dt.Rows.Add(row); //add row to DataTable
                     }
-
-                    dataGridView1.DataSource = dt; //assign DataTable as Datasource for DataGridview
-
+                    for (i = 0; i < dt.Rows.Count; i++)
+                    {  
+                        dt.Rows[i]["Time"] = DateTime.FromOADate(Convert.ToDouble(dt.Rows[i]["Time"].ToString())).ToString("h\\:mm");
+                    }
                     //close and clean excel process
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -164,29 +101,40 @@ namespace Emailapp
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = dt.Rows.Count;
+            //progressBar1.Step = 1;
             MailMessage mailMsg = new MailMessage();
             mailMsg.From = new MailAddress("ajaybharath009@gmail.com", "IB IoT");
-            int count = dataGridView1.Rows.Count - 1;
-            for (int i = 1; i < dataGridView1.Rows.Count; i++)
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                mailMsg.To.Add(new MailAddress(dataGridView1.Rows[i].Cells[1].Value.ToString()));
+                mailMsg.To.Add(new MailAddress(dt.Rows[i]["Emailid"].ToString()));
+                mailMsg.Subject = "Reg: Ideabytes Interview Call";
+                mailMsg.IsBodyHtml = true;
+                mailMsg.Body = $"Dear {dt.Rows[i]["Name"]},<br/><br/>You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}.<br/><br/>" + @"<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBThanks.png'/>"
+                + "<br/><br/> With Regards <br/> <hr/>HR Manager<br/>Ideabytes Inc<br/>Website: www.ideabytes.com<br/><br/>" + "<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBMailImage.png'/>"
+                + "<br/><br/>Important: This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. " +
+                "Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in " +
+                "reliance on the contents of this information is strictly prohibited.";
+                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new NetworkCredential("ajaybharath009@gmail.com", "ajay009@1234");
+                smtp.EnableSsl = true;
+                for (int j = 0; j <= i; j++)
+                {
+                    label2.Text = $"Dear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}";
+                }
+                smtp.Send(mailMsg);
+                mailMsg.To.Clear();
+                progressBar1.Value = i+1;
+                Thread.Sleep(1000);
             }
-            mailMsg.Subject = "Testing Mail";
-            mailMsg.Body = "Hiii";
-            mailMsg.IsBodyHtml = true;
-            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential("ajaybharath009@gmail.com", "ajay009@1234");
-            smtp.EnableSsl = true;
-            smtp.Send(mailMsg);
-            // mailMsg.To.Clear();
             MessageBox.Show("Mail Sent Successfully!!");
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            dataGridView1.Visible = true;
+            //dataGridView1.Visible = true;
         }
+
     }
 }
