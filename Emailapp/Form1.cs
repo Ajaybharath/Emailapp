@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Net;
 using System.Net.Mail;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Emailapp
 {
@@ -26,6 +27,7 @@ namespace Emailapp
             DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
             if (result == DialogResult.OK) // Check if Result == "OK".
             {
+                label1.Text = "";
                 file = openFileDialog1.FileName; //get the filename with the location of the file
                 try
                 {
@@ -44,7 +46,7 @@ namespace Emailapp
                     int colCount = excelRange.Columns.Count; // get column count of excel data
 
                     //Get the first Column of excel file which is the Column Name
-
+                    dt.Clear();
                     for (i = 1; i <= rowCount; i++)
                     {
                         for (int j = 1; j <= colCount; j++)
@@ -53,9 +55,7 @@ namespace Emailapp
                         }
                         break;
                     }
-
-                    //Get Row Data of Excel
-
+                    //Get Row Data of 
                     int rowCounter; //This variable is used for row index number
                     for (int i = 2; i <= rowCount; i++) //Loop for available row of excel data
                     {
@@ -90,51 +90,83 @@ namespace Emailapp
                     Marshal.ReleaseComObject(excelWorkbook);
                     excelApp.Quit();
                     Marshal.ReleaseComObject(excelApp);
+                    label1.Text = "Excel File Uploaded";
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                }
-                label1.Text = "Excel File Uploaded";
+                }  
             }
         }
-
         private void button2_Click(object sender, EventArgs e)
         {
-            progressBar1.Minimum = 0;
-            progressBar1.Maximum = dt.Rows.Count;
-            //progressBar1.Step = 1;
-            MailMessage mailMsg = new MailMessage();
-            mailMsg.From = new MailAddress("ajaybharath009@gmail.com", "IB IoT");
-            for (int i = 0; i < dt.Rows.Count; i++)
+            button1.Enabled = false;
+            button2.Enabled = false;
+            if (label1.Text != "")
             {
-                mailMsg.To.Add(new MailAddress(dt.Rows[i]["Emailid"].ToString()));
-                mailMsg.Subject = "Reg: Ideabytes Interview Call";
-                mailMsg.IsBodyHtml = true;
-                mailMsg.Body = $"Dear {dt.Rows[i]["Name"]},<br/><br/>You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}.<br/><br/>" + @"<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBThanks.png'/>"
-                + "<br/><br/> With Regards <br/> <hr/>HR Manager<br/>Ideabytes Inc<br/>Website: www.ideabytes.com<br/><br/>" + "<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBMailImage.png'/>"
-                + "<br/><br/>Important: This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. " +
-                "Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in " +
-                "reliance on the contents of this information is strictly prohibited.";
-                SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential("ajaybharath009@gmail.com", "ajay009@1234");
-                smtp.EnableSsl = true;
-                for (int j = 0; j <= i; j++)
+                DialogResult dr = MessageBox.Show("Do you really want to send Mails", "Verification", MessageBoxButtons.YesNo);
+                if (dr == DialogResult.Yes)
                 {
-                    label2.Text = $"Dear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}";
+                    progressBar1.Minimum = 0;
+                    progressBar1.Maximum = dt.Rows.Count;
+                    MailMessage mailMsg = new MailMessage();
+                    mailMsg.From = new MailAddress("ajaybharath009@gmail.com", "IB IoT");
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        //Task.Delay(1000);
+                        Thread.Sleep(1000);
+                        mailMsg.To.Add(new MailAddress(dt.Rows[i]["Emailid"].ToString()));
+                        mailMsg.Subject = "Reg: Ideabytes Interview Call";
+                        mailMsg.IsBodyHtml = true;
+                        mailMsg.Body = $"Dear {dt.Rows[i]["Name"]},<br/><br/>You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}.<br/><br/>" + @"<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBThanks.png'/>"
+                        + "<br/><br/> With Regards <br/> <hr/>HR Manager<br/>Ideabytes Inc<br/>Website: www.ideabytes.com<br/><br/>" + "<img src='https://adminiot.dgtrak.online/FTP_Sensorcnt/domain/IBMailImage.png'/>"
+                        + "<br/><br/>Important: This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. " +
+                        "Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in " +
+                        "reliance on the contents of this information is strictly prohibited.";
+                        SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential("ajaybharath009@gmail.com", "ajay009@1234");
+                        smtp.EnableSsl = true;
+                        smtp.Send(mailMsg);
+                        mailMsg.To.Clear();
+                        progressBar1.Value = i + 1;
+                        //label2.Text = $"Dear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}";
+                    }
+                    Thread backgroundThread = new Thread(new ThreadStart(() =>
+                    {
+                        for (int i = 0; i < dt.Rows.Count; i++)
+                        {
+                            Thread.Sleep(1000);
+                            this.label2.Invoke(new MethodInvoker(() => {
+                                label2.Text = $"Dear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]}, as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}";
+                            }));
+                        }
+                    }));
+                    backgroundThread.Start();
+                    DialogResult dr1 = MessageBox.Show("Mail Sent Successfully!!", "", MessageBoxButtons.OK);
+                    if (dr1 == DialogResult.OK)
+                    {
+                        progressBar1.Value = 0;
+                        label2.Text = "";
+                        label1.Text = "";
+                    }
                 }
-                smtp.Send(mailMsg);
-                mailMsg.To.Clear();
-                progressBar1.Value = i+1;
-                Thread.Sleep(1000);
+                else
+                {
+                    MessageBox.Show("Mails sending Cancelled!!!"); 
+                    label1.Text = "";
+                }
             }
-            MessageBox.Show("Mail Sent Successfully!!");
+            else
+            {
+                MessageBox.Show("Please Upload Excel File");
+            }
+            button1.Enabled = true;
+            button2.Enabled = true;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             //dataGridView1.Visible = true;
         }
-
     }
 }

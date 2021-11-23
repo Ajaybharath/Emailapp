@@ -38,7 +38,7 @@ namespace Emailapp
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(48, 12);
+            this.button1.Location = new System.Drawing.Point(48, 59);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(155, 23);
             this.button1.TabIndex = 0;
@@ -48,7 +48,7 @@ namespace Emailapp
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(585, 12);
+            this.button2.Location = new System.Drawing.Point(585, 59);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(152, 23);
             this.button2.TabIndex = 1;
@@ -60,14 +60,14 @@ namespace Emailapp
             // 
             this.label1.AutoSize = true;
             this.label1.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.label1.Location = new System.Drawing.Point(209, 17);
+            this.label1.Location = new System.Drawing.Point(209, 64);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 13);
             this.label1.TabIndex = 3;
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(48, 380);
+            this.progressBar1.Location = new System.Drawing.Point(48, 227);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(689, 23);
             this.progressBar1.Step = 1;
@@ -76,7 +76,7 @@ namespace Emailapp
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(45, 64);
+            this.label2.Location = new System.Drawing.Point(56, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(0, 13);
             this.label2.TabIndex = 5;
