@@ -142,7 +142,7 @@ namespace Emailapp
                             m91.DLT_TE_ID = "1307163756009502008";
                             msg m = new msg();
                             m.to = numbers[i].Split(',');
-                            m.message = $"\n\nDear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]},as we discussed\n your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]} Thanks - Ideabytes";
+                            m.message = $"Dear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]},as we discussed your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]} \nThanks - Ideabytes";
                             m91.sms.Add(m);
                             sendingSMS(m91);
                             progressBar1.Value = i + 1;
@@ -183,43 +183,20 @@ namespace Emailapp
             {
                 string smsKey = Convert.ToString(ConfigurationManager.AppSettings["SMSkey"]);
                 string smsUrl = Convert.ToString(ConfigurationManager.AppSettings["SMSapi"]);
-
-
-
-
                 if (!string.IsNullOrEmpty(m91.sms[0].message))
                 {
                     string DATA = JsonConvert.SerializeObject(m91);
-
-
-
-
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(smsUrl);
                     request.Method = "POST";
-
-
-
                     request.ContentType = "application/json";
                     request.Headers.Add("authkey", smsKey);
-
-
-
                     request.ContentLength = DATA.Length;
-
-
-
                     using (Stream webStream = request.GetRequestStream())
                     using (StreamWriter requestWriter = new StreamWriter(webStream, System.Text.Encoding.ASCII))
                     {
                         requestWriter.Write(DATA);
                     }
-
-
-
                     HttpWebResponse webResp = (HttpWebResponse)request.GetResponse();
-
-
-
                     if (webResp.StatusCode == HttpStatusCode.OK)
                     {
                         StreamReader responseReader = new StreamReader(webResp.GetResponseStream());
@@ -227,7 +204,6 @@ namespace Emailapp
                         responseData += responseReader.ReadToEnd();
                         StringReader stream = null;
                         stream = new StringReader(responseData);
-
                     }
                 }
             }
