@@ -88,7 +88,7 @@ namespace Emailapp
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.label1.ForeColor = System.Drawing.Color.DodgerBlue;
             this.label1.Location = new System.Drawing.Point(492, 106);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(0, 13);
@@ -97,7 +97,7 @@ namespace Emailapp
             // progressBar1
             // 
             this.progressBar1.BackColor = System.Drawing.Color.DodgerBlue;
-            this.progressBar1.ForeColor = System.Drawing.Color.White;
+            this.progressBar1.ForeColor = System.Drawing.Color.Transparent;
             this.progressBar1.Location = new System.Drawing.Point(18, 392);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(459, 46);
