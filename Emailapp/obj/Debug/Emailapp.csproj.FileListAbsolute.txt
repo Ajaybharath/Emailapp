@@ -9,3 +9,4 @@ E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.GenerateResource.cache
 E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.CoreCompileInputs.cache
 E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.exe
 E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.pdb
+E:\ASSINGMENT\Emailapp\Emailapp\obj\Debug\Emailapp.csproj.CopyComplete

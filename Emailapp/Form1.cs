@@ -6,6 +6,9 @@ using System.Net;
 using System.Net.Mail;
 using System.Threading;
 using System.IO;
+using System.Configuration;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Emailapp
 {
@@ -17,6 +20,7 @@ namespace Emailapp
         }
         int i;
         System.Data.DataTable dt;
+        List<string> numbers = new List<string>();
         private void button1_Click(object sender, EventArgs e)
         {
             string file = "";
@@ -37,7 +41,8 @@ namespace Emailapp
                     Microsoft.Office.Interop.Excel._Worksheet excelWorksheet = excelWorkbook.Sheets[1];
                     Microsoft.Office.Interop.Excel.Range excelRange = excelWorksheet.UsedRange;
                     int rowCount = excelRange.Rows.Count; 
-                    int colCount = excelRange.Columns.Count; 
+                    int colCount = excelRange.Columns.Count;
+                    numbers = new List<string>();
                     dt.Clear();
                     for (i = 1; i <= rowCount; i++)
                     {
@@ -66,6 +71,10 @@ namespace Emailapp
                             rowCounter++;
                         }
                         dt.Rows.Add(row); //add row to DataTable
+                    }
+                    for (i = 0; i < dt.Rows.Count; i++)
+                    {
+                        numbers.Add(dt.Rows[i]["Mobile No"].ToString());
                     }
                     //for (i = 0; i < dt.Rows.Count; i++)
                     //{  
@@ -124,6 +133,18 @@ namespace Emailapp
                             smtp.EnableSsl = true;
                             smtp.Send(mailMsg);
                             mailMsg.To.Clear();
+                            //mobile massages
+                            msg91 m91 = new msg91();
+                            m91.country = "91";
+                            m91.sender = "IDESOF";
+                            m91.route = "4";
+                            m91.sms = new List<msg>();
+                            m91.DLT_TE_ID = "1307163756009502008";
+                            msg m = new msg();
+                            m.to = numbers[i].Split(',');
+                            m.message = $"\n\nDear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]},as we discussed\n your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]} Thanks - Ideabytes";
+                            m91.sms.Add(m);
+                            sendingSMS(m91);
                             progressBar1.Value = i + 1;
                             richTextBox1.Text += $"\n\nDear {dt.Rows[i]["Name"]},You are shortlisted for {dt.Rows[i]["Position"]},as we discussed\n your interview was scheduled on {dt.Rows[i]["Date"]} at {dt.Rows[i]["Time"]}.";
                             richTextBox1.Update();
@@ -154,6 +175,65 @@ namespace Emailapp
             {
                 ex1= null;
                 MessageBox.Show("The Mails sending was not Completed!!!!");
+            }
+        }
+        public void sendingSMS(msg91 m91)
+        {
+            try
+            {
+                string smsKey = Convert.ToString(ConfigurationManager.AppSettings["SMSkey"]);
+                string smsUrl = Convert.ToString(ConfigurationManager.AppSettings["SMSapi"]);
+
+
+
+
+                if (!string.IsNullOrEmpty(m91.sms[0].message))
+                {
+                    string DATA = JsonConvert.SerializeObject(m91);
+
+
+
+
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(smsUrl);
+                    request.Method = "POST";
+
+
+
+                    request.ContentType = "application/json";
+                    request.Headers.Add("authkey", smsKey);
+
+
+
+                    request.ContentLength = DATA.Length;
+
+
+
+                    using (Stream webStream = request.GetRequestStream())
+                    using (StreamWriter requestWriter = new StreamWriter(webStream, System.Text.Encoding.ASCII))
+                    {
+                        requestWriter.Write(DATA);
+                    }
+
+
+
+                    HttpWebResponse webResp = (HttpWebResponse)request.GetResponse();
+
+
+
+                    if (webResp.StatusCode == HttpStatusCode.OK)
+                    {
+                        StreamReader responseReader = new StreamReader(webResp.GetResponseStream());
+                        string responseData = string.Empty;
+                        responseData += responseReader.ReadToEnd();
+                        StringReader stream = null;
+                        stream = new StringReader(responseData);
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex = null;
             }
         }
         private void Form1_Load(object sender, EventArgs e)
