@@ -113,7 +113,7 @@ namespace Emailapp
             this.richTextBox1.Location = new System.Drawing.Point(12, 40);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(456, 317);
+            this.richTextBox1.Size = new System.Drawing.Size(456, 324);
             this.richTextBox1.TabIndex = 6;
             this.richTextBox1.Text = "";
             // 
